@@ -27,7 +27,7 @@ pipeline {
     }
 
     environment {
-        GIT_URL = "https://github.com/goozip2/kube-api-gateway.git"
+        GIT_URL = "https://github.com/goozip2/k8s-api-gateway.git"
         GITHUB_CREDENTIAL = "github-token"
         ARTIFACTS = "build/libs/**"
         DOCKER_REGISTRY = "goozip2"
