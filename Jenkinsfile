@@ -3,7 +3,6 @@ def APP_NAME
 def APP_VERSION
 def DOCKER_IMAGE_NAME
 def PROD_BUILD = false
-def TAG_BUILD = false
 pipeline {
     agent {
         node {
@@ -31,7 +30,7 @@ pipeline {
         GITHUB_CREDENTIAL = "github-token"
         ARTIFACTS = "build/libs/**"
         DOCKER_REGISTRY = "goozip2"
-        DOCKERHUB_CREDENTIAL = 'docker-token'
+        DOCKERHUB_CREDENTIAL = 'dockerhub-token'
     }
 
     options {
@@ -47,7 +46,7 @@ pipeline {
     }
 
     stages {
-        stage('Set Version') {
+        stage('Set Version') {	// docker image 이름 지정
             steps {
                 script {
                     APP_NAME = sh (
@@ -68,11 +67,10 @@ pipeline {
                     sh "echo TAG is ${params.TAG}"
                     if( params.TAG.startsWith('origin') == false && params.TAG.endsWith('/main') == false ) {
                         if( params.RELEASE == true ) {
-                            DOCKER_IMAGE_NAME += '-RELEASE'
+                            DOCKER_IMAGE_VERSION += '-RELEASE'
                             PROD_BUILD = true
                         } else {
-                            DOCKER_IMAGE_NAME += '-TAG'
-                            TAG_BUILD = true
+                            DOCKER_IMAGE_VERSION += '-TAG'
                         }
                     }
                 }
@@ -86,9 +84,6 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-//             when {
-//                 expression { PROD_BUILD == true || TAG_BUILD == true }
-//             }
             steps {
                 script {
                     docker.build "${DOCKER_IMAGE_NAME}"
@@ -97,9 +92,6 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-//             when {
-//                 expression { PROD_BUILD == true || TAG_BUILD == true }
-//             }
             steps {
                 script {
                     docker.withRegistry("", DOCKERHUB_CREDENTIAL) {
