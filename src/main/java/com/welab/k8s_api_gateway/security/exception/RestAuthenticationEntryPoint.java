@@ -23,5 +23,6 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         if (cause instanceof ResourceAccessException accessException) {
             exception = accessException;
         }
-        handlerExceptionResolver.resolveException(request, response, null, exception);}
+        handlerExceptionResolver.resolveException(request, response, null, exception);
+    }
 }

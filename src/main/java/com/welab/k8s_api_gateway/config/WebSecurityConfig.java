@@ -43,7 +43,9 @@ public class WebSecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionConfig) ->
                         exceptionConfig
+                                // 인증이 필요한 리소스에 인증되지 않은 사용자가 접근했을 경우 핸들러 (401)
                                 .authenticationEntryPoint(authenticationEntryPoint)
+                                // 인증은 되었지만, 권한 없는 사용자가 접근했을 경우 핸들러 (403)
                                 .accessDeniedHandler(accessDeniedHandler))
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/api/user/v1/auth/**").permitAll()

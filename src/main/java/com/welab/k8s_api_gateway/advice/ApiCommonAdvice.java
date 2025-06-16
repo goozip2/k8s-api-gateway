@@ -8,7 +8,9 @@ import com.welab.k8s_api_gateway.common.exception.NotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,7 +39,6 @@ public class ApiCommonAdvice {
         );
     }
 
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ClientError.class})
     public ApiResponseDto<String> handleClientError(ClientError e) {
@@ -63,11 +64,28 @@ public class ApiCommonAdvice {
         );
     }
 
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    @ExceptionHandler({InsufficientAuthenticationException.class})
+//    public ApiResponseDto<String> handleInsufficientAuthenticationException(
+//            InsufficientAuthenticationException e) {
+//        return ApiResponseDto.createError(
+//                "Unauthenticated", "인증되지 않았습니다.");
+//    }
+
+    @ExceptionHandler({AccessDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiResponseDto<String> handleAccessDeniedException(AccessDeniedException e) {
+        return ApiResponseDto.createError(
+                "Forbidden", "접근 권한이 없습니다.");
+    }
+
+    @ExceptionHandler({AuthenticationException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler({InsufficientAuthenticationException.class})
-    public ApiResponseDto<String> handleInsufficientAuthenticationException(
-            InsufficientAuthenticationException e) {
+    public ApiResponseDto<String> handleAuthenticationException(AuthenticationException e) {
         return ApiResponseDto.createError(
                 "Unauthenticated", "인증되지 않았습니다.");
     }
+
+
+
 }
